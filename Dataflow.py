@@ -4,14 +4,14 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Load YOLOv5 Object Detection Model
+#  YOLOv5 Object Detection Model
 yolo_model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
 
-# Load MiDaS Depth Estimation Model
+#  MiDaS Depth Estimation Model
 depth_model = torch.hub.load("intel-isl/MiDaS", "MiDaS_small")
 depth_model.eval()
 
-# Load MiDaS Transformations
+#  MiDaS Transformations
 transform_pipeline = torch.hub.load("intel-isl/MiDaS", "transforms").small_transform
 
 # Create output folder for processed images
@@ -29,7 +29,7 @@ def detect_pedestrians(image_path):
     detection_results = yolo_model(img_rgb, size=1024)
     detections = detection_results.pandas().xyxy[0]
     
-    # Filter out only pedestrian detections
+    # only pedestrian detections
     pedestrians = detections[detections['name'] == 'person']
     
     # Estimate depth using MiDaS
@@ -86,7 +86,7 @@ def process_images(folder_path):
                 label = f"Person {confidence}, {distance}m"
                 cv2.putText(img, label, (bbox[0], bbox[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             
-            # Save the processed image
+            # processed image
             output_path = os.path.join(output_folder, file_name)
             cv2.imwrite(output_path, img)
             print(f"Saved: {output_path}")
